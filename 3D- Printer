@@ -1,0 +1,239 @@
+/* EE2450 Fall 2018
+ * 3D-Printer Project
+ * Braulio Torres, Rocio Espinal, Wyatt Luong
+ * Dr. Yi Zhao
+ * dark.sight97@gmail.com
+ *espinalrocio088@gmail.com
+ */
+#include <stdio.h>
+
+enum ShapeCode {
+    SC_CUBE = 0,
+    SC_CUBOID = 1,
+    SC_SPHERE = 2,
+    SC_CYLINDER = 3,
+    SC_CONE = 4,
+    SC_COUNT = 5
+};
+enum ColorCode {
+    CC_RED = 0,
+    CC_GREEN = 1,
+    CC_BLUE = 2,
+    CC_BLACK = 3,
+    CC_COUNT = 4
+};
+enum CommandOption {
+    CO_HELP = 0,
+    CO_PRINT = 1,
+    CO_STAT = 2,
+    CO_INVEN = 3,
+    CO_EXIT = 4
+};
+
+
+
+typedef struct ObjectData_struct {
+    int index;
+    bool valid;
+    bool printed;
+    int shape;
+    int color;
+    double volume;
+} ObjectData;
+
+// defines
+#define MAX_OBJECTS 1000
+#define PI 3.1415926
+// global data
+ObjectData g_objectList[MAX_OBJECTS];
+int g_objectCount = 0;
+// function prototypes
+
+void ProcessCommand(int command);
+
+void DisplayOption();
+
+void PrintObject();
+
+ObjectData ReadObjectData();
+
+void DisplayStatistics();
+
+void ControlInventory(ObjectData object);
+
+void DisplayOption() {
+    
+    printf("\nCommand options:\n");
+    printf(" 0- display help information\n");
+    printf(" 1- print 3-D object\n");
+    printf(" 2- object statistics\n");
+    printf(" 3- materail inventory\n");
+    printf(" 4- exit\n");
+    
+}
+
+void DisplayHelp() {
+    
+    printf("\nCommand options:\n");
+    printf(" 0- display help information - Displays Menu and Shape and Color Number Meaning.\n");
+    printf("\n");
+    printf(" 1- print 3-D object - User Input for desired shape, color and dimension.\n");
+    printf("\n");
+    printf(" 2- object statistics - User input statistics (percentage on shapes and colors printed, most popular color and shape, etc.)\n");
+    printf("\n");
+    printf(" 3- materail inventory - (track, display & restock raw materials.)\n");
+    printf("\n");
+    printf(" 4- exit\n");
+    printf("\n");
+    
+    printf("*Legend*\n");
+    printf("   0- Cube \t     0- Red \n");
+    printf("   1- Cuboid \t 1- Green\n");
+    printf("   2- Sphere \t 2-Blue\n");
+    printf("   3- Cylinder \t 3-Black\n");
+    printf("   4- Sphere\n");
+    
+    
+}
+
+void ProcessCommand(int command){
+    ObjectData object;
+    switch(command){
+        case CO_HELP:
+            DisplayHelp();
+            break;
+        case CO_PRINT:
+            PrintObject();
+            break;
+        case CO_STAT:
+            DisplayStatistics();
+            break;
+        case CO_INVEN:
+            ControlInventory(object);
+            break;
+        case CO_EXIT:
+            printf("Exit program ...\n");
+            break;
+        default:
+        printf("Invalid command!\n");}
+    
+}
+
+void PrintObject() {
+    
+    ObjectData current;
+    // step 1 - read 3-D object data from user
+    current = ReadObjectData();
+    g_objectList[g_objectCount] = current;
+    g_objectCount++;
+    // step 2 - print 3-D object & update materail inventory
+}
+
+ObjectData ReadObjectData()
+{
+    ObjectData object;
+    object.index = g_objectCount;
+    object.valid = true;
+    object.printed = false;
+    double length;
+    double height;
+    double width;
+    double radius;
+    double redRaw, greenRaw, blueRaw, blackRaw;
+    redRaw = 1000;
+    greenRaw = 1000;
+    blueRaw = 1000;
+    blackRaw = 1000;
+    
+    // read shape and color
+    
+    printf("Please enter the shape and color of object : ");
+    scanf("%d%d", &object.shape, &object.color);
+    
+    
+    // read object dimension
+    switch (object.shape)
+    {
+        case SC_CUBE:
+            printf("Please enter cube's side length : ");
+            scanf("%lf", &length);
+            object.volume = length * length * length;
+            printf("Cube Volume : %lf", object.volume);
+            printf("\n");
+            if(CC_RED == object.color) {
+                redRaw = redRaw - object.volume;
+            }
+            break;
+        case SC_CUBOID:
+            printf("Please enter cuboid's length, height & width : ");
+            scanf("%lf%lf%lf", &length, &width, &height);
+            object.volume = length * width * height;
+            printf("Cuboid Volume : %lf", object.volume);
+            printf("\n");
+            break;
+        case SC_SPHERE:
+            printf("Please enter sphere's radius : ");
+            scanf("%lf", &radius);
+            object.volume = (4.0/3.0) * PI * (radius * radius * radius);
+            printf("Sphere Volume : %lf", object.volume);
+            printf("\n");
+            break;
+        case SC_CYLINDER:
+            printf("Please enter cylinder's radius and height : \n");
+            printf("Radius : ");
+            scanf("%lf", &radius);
+            printf("Height : ");
+            scanf("%lf", &height);
+            object.volume = PI * (radius * radius) * height;
+            printf("Cylinder Volume : %lf", object.volume);
+            printf("\n");
+            break;
+        case SC_CONE:
+            printf("Please enter cone's radius and height : \n");
+            printf("Radius : ");
+            scanf("%lf", &radius);
+            printf("Height : ");
+            scanf("%lf", &height);
+            object.volume = (height/3.0) * PI * (radius * radius);
+            printf("Cone Volume : %lf", object.volume);
+            printf("\n");
+            break;
+    }
+    // compute object volume
+    return object;
+}
+
+void DisplayStatistics()
+{
+    // display object statistics
+}
+
+void ControlInventory( ObjectData object) {
+
+    double redRaw, greenRaw, blueRaw, blackRaw;
+    redRaw = 1000;
+    greenRaw = 1000;
+    blueRaw = 1000;
+    blackRaw = 1000;
+    
+             printf("%lf", redRaw);
+     
+         }
+
+    
+    int main() {
+        int command = CO_HELP;
+        printf("Welcome to 3-D Printer!");
+        
+        DisplayOption();
+        
+        do {
+            printf("\nPlease enter command : ");
+            scanf("%d", &command);
+            printf("\n");
+            ProcessCommand(command);
+        }
+        while (command != CO_EXIT);
+        return 0;
+        
+    }
