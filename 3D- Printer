@@ -59,7 +59,7 @@ ObjectData ReadObjectData();
 
 void DisplayStatistics();
 
-void ControlInventory(ObjectData object);
+void ControlInventory(ObjectData g_objectList[g_objectCount]);
 
 void DisplayOption() {
     
@@ -109,7 +109,7 @@ void ProcessCommand(int command){
             DisplayStatistics();
             break;
         case CO_INVEN:
-            ControlInventory(object);
+            ControlInventory(g_objectList);
             break;
         case CO_EXIT:
             printf("Exit program ...\n");
@@ -139,11 +139,6 @@ ObjectData ReadObjectData()
     double height;
     double width;
     double radius;
-    double redRaw, greenRaw, blueRaw, blackRaw;
-    redRaw = 1000;
-    greenRaw = 1000;
-    blueRaw = 1000;
-    blackRaw = 1000;
     
     // read shape and color
     
@@ -160,9 +155,6 @@ ObjectData ReadObjectData()
             object.volume = length * length * length;
             printf("Cube Volume : %lf", object.volume);
             printf("\n");
-            if(CC_RED == object.color) {
-                redRaw = redRaw - object.volume;
-            }
             break;
         case SC_CUBOID:
             printf("Please enter cuboid's length, height & width : ");
@@ -208,7 +200,7 @@ void DisplayStatistics()
     // display object statistics
 }
 
-void ControlInventory( ObjectData object) {
+void ControlInventory(ObjectData g_objectList[g_objectCount]) {
 
     double redRaw, greenRaw, blueRaw, blackRaw;
     redRaw = 1000;
@@ -216,9 +208,8 @@ void ControlInventory( ObjectData object) {
     blueRaw = 1000;
     blackRaw = 1000;
     
-             printf("%lf", redRaw);
-     
-         }
+    printf("Cone Volume : %lf", g_objectList[0].volume);
+}
 
     
     int main() {
