@@ -6,6 +6,7 @@
  *espinalrocio088@gmail.com
  */
 #include <stdio.h>
+#include <stdbool.h>
 
 enum ShapeCode {
     SC_CUBE = 0,
@@ -51,13 +52,13 @@ int g_objectCount = 0;
 
 void ProcessCommand(int command);
 
-void DisplayOption();
+void DisplayOption(void);
 
-void PrintObject();
+void PrintObject(void);
 
-ObjectData ReadObjectData();
+ObjectData ReadObjectData(void);
 
-void DisplayStatistics();
+void DisplayStatistics(void);
 
 void ControlInventory(ObjectData g_objectList[g_objectCount]);
 
@@ -97,7 +98,7 @@ void DisplayHelp() {
 }
 
 void ProcessCommand(int command){
-    ObjectData object;
+    //ObjectData object;
     switch(command){
         case CO_HELP:
             DisplayHelp();
@@ -115,7 +116,7 @@ void ProcessCommand(int command){
             printf("Exit program ...\n");
             break;
         default:
-        printf("Invalid command!\n");}
+            printf("Invalid command!\n");}
     
 }
 
@@ -139,6 +140,11 @@ ObjectData ReadObjectData()
     double height;
     double width;
     double radius;
+    double redRaw, greenRaw, blueRaw, blackRaw;
+    redRaw = 1000;
+    greenRaw = 1000;
+    blueRaw = 1000;
+    blackRaw = 1000;
     
     // read shape and color
     
@@ -155,6 +161,9 @@ ObjectData ReadObjectData()
             object.volume = length * length * length;
             printf("Cube Volume : %lf", object.volume);
             printf("\n");
+            if(CC_RED == object.color) {
+                redRaw = redRaw - object.volume;
+            }
             break;
         case SC_CUBOID:
             printf("Please enter cuboid's length, height & width : ");
@@ -201,30 +210,83 @@ void DisplayStatistics()
 }
 
 void ControlInventory(ObjectData g_objectList[g_objectCount]) {
-
+    
     double redRaw, greenRaw, blueRaw, blackRaw;
     redRaw = 1000;
     greenRaw = 1000;
     blueRaw = 1000;
     blackRaw = 1000;
     
-    printf("Cone Volume : %lf", g_objectList[0].volume);
+    printf("Current %u volume :%f\n", g_objectList->shape, g_objectList->volume);
+    printf("%f\n", redRaw);
+    printf("%f\n", greenRaw);
+    printf("%f\n", blueRaw);
+    printf("%f\n", blackRaw);
+    
+    if(g_objectList->volume < redRaw) {
+        int option;
+        printf("Do you want to cancel printing or restock more raw material?\n");
+        scanf("%d", &option);
+        switch(option) {
+            case 1:
+                redRaw += 1000;
+                g_objectCount++;
+            default:
+                break;
+        }
+    }
+    else if(g_objectList->volume < greenRaw) {
+        int option;
+        printf("Do you want to cancel printing or restock more raw material?\n");
+        scanf("%d", &option);
+        switch(option) {
+            case 1:
+                greenRaw += 1000;
+                g_objectCount++;
+            default:
+                break;
+        }
+    }
+    else if(g_objectList->volume < blueRaw) {
+        int option;
+        printf("Do you want to cancel printing or restock more raw material?\n");
+        scanf("%d", &option);
+        switch(option) {
+            case 1:
+                blueRaw += 1000;
+                g_objectCount++;
+            default:
+                break;
+        }
+    }
+    else if(g_objectList->volume < blackRaw) {
+        int option;
+        printf("Do you want to cancel printing or restock more raw material?\n");
+        scanf("%d", &option);
+        switch(option) {
+            case 1:
+                blackRaw += 1000;
+                g_objectCount++;
+            default:
+                break;
+        }
+    }
 }
 
+
+int main() {
+    int command = CO_HELP;
+    printf("Welcome to 3-D Printer!");
     
-    int main() {
-        int command = CO_HELP;
-        printf("Welcome to 3-D Printer!");
-        
-        DisplayOption();
-        
-        do {
-            printf("\nPlease enter command : ");
-            scanf("%d", &command);
-            printf("\n");
-            ProcessCommand(command);
-        }
-        while (command != CO_EXIT);
-        return 0;
-        
+    DisplayOption();
+    
+    do {
+        printf("\nPlease enter command : ");
+        scanf("%d", &command);
+        printf("\n");
+        ProcessCommand(command);
+    }
+    while (command != CO_EXIT);
+    return 0;
+    
     }
