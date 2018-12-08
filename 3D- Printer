@@ -220,19 +220,69 @@ void ControlInventory() {
     if(g_objectList [i].color == 0) {
         redRaw = redRaw - g_objectList [i].volume;
         if(redRaw < g_objectList [i].volume) {
+            int option;
+            while(g_objectCount>0){
+            printf("You have to restock : ");
+            scanf("%d", &option);
+            if(option == 1){
             redRaw = 1000;
+                break;
+            }
+            else {
+                continue;
+            }
         }
     }
+}
     else if(g_objectList [i].color == 1) {
         greenRaw = greenRaw - g_objectList [i].volume;
         if(greenRaw < g_objectList [i].volume) {
-            greenRaw = 1000;
+            int option;
+            while(g_objectCount>0){
+                printf("You have to restock : ");
+                scanf("%d", &option);
+                if(option == 1){
+                    greenRaw = 1000;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
         }
     }
     else if(g_objectList [i].color == 2) {
         blueRaw = blueRaw - g_objectList [i].volume;
         if(blueRaw < g_objectList [i].volume) {
-            blueRaw = 1000;
+            int option;
+            while(g_objectCount>0){
+                printf("You have to restock : ");
+                scanf("%d", &option);
+                if(option == 1){
+                    blueRaw = 1000;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+    else if(g_objectList [i].color == 3) {
+        blackRaw = blackRaw - g_objectList [i].volume;
+        if(blackRaw < g_objectList [i].volume) {
+            int option;
+            while(g_objectCount>0){
+                printf("You have to restock : ");
+                scanf("%d", &option);
+                if(option == 1){
+                    blackRaw = 1000;
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
         }
     }
         
