@@ -6,6 +6,7 @@
  *espinalrocio088@gmail.com
  */
 #include <stdio.h>
+#include <math.h>
 #include <stdbool.h>
 
 enum ShapeCode {
@@ -135,6 +136,7 @@ ObjectData ReadObjectData()
     object.index = g_objectCount;
     object.valid = true;
     object.printed = false;
+    int i, color, shape;
     double length;
     double height;
     double width;
@@ -147,10 +149,30 @@ ObjectData ReadObjectData()
     
     // read shape and color
     
-    printf("Please enter the shape and color of object : ");
-    scanf("%d%d", &object.shape, &object.color);
-    
-    
+    printf("Please enter the shape and color of object :\n");
+            printf("Shape (0-4): ");
+            scanf("%d", &shape);
+        for(i = 0; i >= 0; i++){
+            if (0 > shape || shape > 4){
+            printf("Choose a shape in range: ");
+            scanf("%d", &shape);
+        }
+            else
+                break;
+    }
+    object.shape = shape;
+            printf("Color(0-3): ");
+            scanf("%d", &color);
+    for(i = 0; i >= 0; i++){
+        if (0 > color || color > 3){
+            printf("Choose a shape in range: ");
+            scanf("%d", &color);
+        }
+        else
+            break;
+    }
+    object.color = color;
+
     // read object dimension
     switch (object.shape)
     {
@@ -215,88 +237,88 @@ void ControlInventory() {
     greenRaw = 1000;
     blueRaw = 1000;
     blackRaw = 1000;
-   
+    
     for(int i=0; i< g_objectCount; i++){
-    if(g_objectList [i].color == 0) {
-        redRaw = redRaw - g_objectList [i].volume;
-        if(redRaw < g_objectList [i].volume) {
-            int option;
-            while(g_objectCount>0){
-            printf("You have to restock : ");
-            scanf("%d", &option);
-            if(option == 1){
-            redRaw = 1000;
-                break;
-            }
-            else {
-                continue;
-            }
-        }
-    }
-}
-    else if(g_objectList [i].color == 1) {
-        greenRaw = greenRaw - g_objectList [i].volume;
-        if(greenRaw < g_objectList [i].volume) {
-            int option;
-            while(g_objectCount>0){
-                printf("You have to restock : ");
-                scanf("%d", &option);
-                if(option == 1){
-                    greenRaw = 1000;
-                    break;
-                }
-                else {
-                    continue;
+        if(g_objectList [i].color == 0) {
+            redRaw = redRaw - g_objectList [i].volume;
+            if(redRaw < g_objectList [i].volume) {
+                int option;
+                while(g_objectCount>0){
+                    printf("You have to restock : ");
+                    scanf("%d", &option);
+                    if(option == 1){
+                        redRaw = 1000;
+                        break;
+                    }
+                    else {
+                        continue;
+                    }
                 }
             }
         }
-    }
-    else if(g_objectList [i].color == 2) {
-        blueRaw = blueRaw - g_objectList [i].volume;
-        if(blueRaw < g_objectList [i].volume) {
-            int option;
-            while(g_objectCount>0){
-                printf("You have to restock : ");
-                scanf("%d", &option);
-                if(option == 1){
-                    blueRaw = 1000;
-                    break;
-                }
-                else {
-                    continue;
-                }
-            }
-        }
-    }
-    else if(g_objectList [i].color == 3) {
-        blackRaw = blackRaw - g_objectList [i].volume;
-        if(blackRaw < g_objectList [i].volume) {
-            int option;
-            while(g_objectCount>0){
-                printf("You have to restock : ");
-                scanf("%d", &option);
-                if(option == 1){
-                    blackRaw = 1000;
-                    break;
-                }
-                else {
-                    continue;
+        else if(g_objectList [i].color == 1) {
+            greenRaw = greenRaw - g_objectList [i].volume;
+            if(greenRaw < g_objectList [i].volume) {
+                int option;
+                while(g_objectCount>0){
+                    printf("You have to restock : ");
+                    scanf("%d", &option);
+                    if(option == 1){
+                        greenRaw = 1000;
+                        break;
+                    }
+                    else {
+                        continue;
+                    }
                 }
             }
         }
-    }
+        else if(g_objectList [i].color == 2) {
+            blueRaw = blueRaw - g_objectList [i].volume;
+            if(blueRaw < g_objectList [i].volume) {
+                int option;
+                while(g_objectCount>0){
+                    printf("You have to restock : ");
+                    scanf("%d", &option);
+                    if(option == 1){
+                        blueRaw = 1000;
+                        break;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+            }
+        }
+        else if(g_objectList [i].color == 3) {
+            blackRaw = blackRaw - g_objectList [i].volume;
+            if(blackRaw < g_objectList [i].volume) {
+                int option;
+                while(g_objectCount>0){
+                    printf("You have to restock : ");
+                    scanf("%d", &option);
+                    if(option == 1){
+                        blackRaw = 1000;
+                        break;
+                    }
+                    else {
+                        continue;
+                    }
+                }
+            }
+        }
         
     }
     
-        printf("Current %d volume :%f\n", update.shape, update.volume);
-        printf("%f\n", redRaw);
-        printf("%f\n", greenRaw);
-        printf("%f\n", blueRaw);
-        printf("%f\n", blackRaw);
+    printf("Current %d volume :%f\n", update.shape, update.volume);
+    printf("%f\n", redRaw);
+    printf("%f\n", greenRaw);
+    printf("%f\n", blueRaw);
+    printf("%f\n", blackRaw);
     
 }
 
-
+    
 int main() {
     int command = CO_HELP;
     printf("Welcome to 3-D Printer!");
@@ -311,6 +333,5 @@ int main() {
     }
     while (command != CO_EXIT);
     return 0;
-    
 }
 
