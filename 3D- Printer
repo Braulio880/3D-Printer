@@ -49,6 +49,7 @@ typedef struct ObjectData_struct {
 // global data
 ObjectData g_objectList[MAX_OBJECTS];
 int g_objectCount = 0;
+double redRaw = 1000, greenRaw = 1000, blueRaw = 1000, blackRaw = 1000;
 // function prototypes
 
 void ProcessCommand(int command);
@@ -132,7 +133,7 @@ void PrintObject() {
 
 ObjectData ReadObjectData()
 {
-    ObjectData object;
+    ObjectData object, restock;
     object.index = g_objectCount;
     object.valid = true;
     object.printed = false;
@@ -141,28 +142,22 @@ ObjectData ReadObjectData()
     double height;
     double width;
     double radius;
-    double redRaw, greenRaw, blueRaw, blackRaw;
-    redRaw = 1000;
-    greenRaw = 1000;
-    blueRaw = 1000;
-    blackRaw = 1000;
-    
     // read shape and color
     
     printf("Please enter the shape and color of object :\n");
-            printf("Shape (0-4): ");
-            scanf("%d", &shape);
-        for(i = 0; i >= 0; i++){
-            if (0 > shape || shape > 4){
+    printf("Shape (0-4): ");
+    scanf("%d", &shape);
+    for(i = 0; i >= 0; i++){
+        if (0 > shape || shape > 4){
             printf("Choose a shape in range: ");
             scanf("%d", &shape);
         }
-            else
-                break;
+        else
+            break;
     }
     object.shape = shape;
-            printf("Color(0-3): ");
-            scanf("%d", &color);
+    printf("Color(0-3): ");
+    scanf("%d", &color);
     for(i = 0; i >= 0; i++){
         if (0 > color || color > 3){
             printf("Choose a shape in range: ");
@@ -172,7 +167,7 @@ ObjectData ReadObjectData()
             break;
     }
     object.color = color;
-
+    
     // read object dimension
     switch (object.shape)
     {
@@ -180,10 +175,35 @@ ObjectData ReadObjectData()
             printf("Please enter cube's side length : ");
             scanf("%lf", &length);
             object.volume = length * length * length;
+                for(i = 0; i >= 0; i++){
+                    if(object.volume > 1000) {
+                        printf("Not enough material! Enter another cube's side length : ");
+                        scanf("%lf", &length);
+                        object.volume = length * length * length;
+                    }
+                    else
+                        break;
+                }
+                
             printf("Cube Volume : %lf", object.volume);
             printf("\n");
-            if(CC_RED == object.color) {
+            if(object.color == CC_RED) {
                 redRaw = redRaw - object.volume;
+                    if(redRaw < 0){
+                        printf("No more material! Go to ""Material Inventory"" to restock.\n");
+                        return restock;
+                            break;
+                        }
+                    }
+        
+            else if(object.color == CC_GREEN) {
+                greenRaw = greenRaw - object.volume;
+            }
+            else if(object.color == CC_BLUE) {
+                blueRaw = blueRaw - object.volume;
+            }
+            if(object.color == CC_BLACK) {
+                blackRaw = blackRaw - object.volume;
             }
             break;
         case SC_CUBOID:
@@ -192,6 +212,34 @@ ObjectData ReadObjectData()
             object.volume = length * width * height;
             printf("Cuboid Volume : %lf", object.volume);
             printf("\n");
+            
+            if(object.color == CC_RED) {
+                redRaw = redRaw - object.volume;
+                if(redRaw < 0){
+                    int option;
+                    while(g_objectCount>0){
+                        printf("You have to restock : ");
+                        scanf("%d", &option);
+                        if(option == 1){
+                            redRaw = 1000;
+                            break;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                }
+            }
+   
+            else if(object.color == CC_GREEN) {
+                greenRaw = greenRaw - object.volume;
+            }
+            else if(object.color == CC_BLUE) {
+                blueRaw = blueRaw - object.volume;
+            }
+            if(object.color == CC_BLACK) {
+                blackRaw = blackRaw - object.volume;
+            }
             break;
         case SC_SPHERE:
             printf("Please enter sphere's radius : ");
@@ -199,6 +247,18 @@ ObjectData ReadObjectData()
             object.volume = (4.0/3.0) * PI * (radius * radius * radius);
             printf("Sphere Volume : %lf", object.volume);
             printf("\n");
+            if(object.color == CC_RED) {
+                redRaw = redRaw - object.volume;
+            }
+            else if(object.color == CC_GREEN) {
+                greenRaw = greenRaw - object.volume;
+            }
+            else if(object.color == CC_BLUE) {
+                blueRaw = blueRaw - object.volume;
+            }
+            if(object.color == CC_BLACK) {
+                blackRaw = blackRaw - object.volume;
+            }
             break;
         case SC_CYLINDER:
             printf("Please enter cylinder's radius and height : \n");
@@ -209,6 +269,18 @@ ObjectData ReadObjectData()
             object.volume = PI * (radius * radius) * height;
             printf("Cylinder Volume : %lf", object.volume);
             printf("\n");
+            if(object.color == CC_RED) {
+                redRaw = redRaw - object.volume;
+            }
+            else if(object.color == CC_GREEN) {
+                greenRaw = greenRaw - object.volume;
+            }
+            else if(object.color == CC_BLUE) {
+                blueRaw = blueRaw - object.volume;
+            }
+            if(object.color == CC_BLACK) {
+                blackRaw = blackRaw - object.volume;
+            }
             break;
         case SC_CONE:
             printf("Please enter cone's radius and height : \n");
@@ -219,11 +291,24 @@ ObjectData ReadObjectData()
             object.volume = (height/3.0) * PI * (radius * radius);
             printf("Cone Volume : %lf", object.volume);
             printf("\n");
+            if(object.color == CC_RED) {
+                redRaw = redRaw - object.volume;
+            }
+            else if(object.color == CC_GREEN) {
+                greenRaw = greenRaw - object.volume;
+            }
+            else if(object.color == CC_BLUE) {
+                blueRaw = blueRaw - object.volume;
+            }
+            if(object.color == CC_BLACK) {
+                blackRaw = blackRaw - object.volume;
+            }
             break;
     }
     // compute object volume
     return object;
 }
+
 
 void DisplayStatistics()
 {
@@ -232,16 +317,17 @@ void DisplayStatistics()
 
 void ControlInventory() {
     ObjectData update = g_objectList [g_objectCount-1];
-    double redRaw, greenRaw, blueRaw, blackRaw;
-    redRaw = 1000;
-    greenRaw = 1000;
-    blueRaw = 1000;
-    blackRaw = 1000;
     
-    for(int i=0; i< g_objectCount; i++){
+    printf("What would you like to do?\n");
+    printf("/t 1) Restock\n 2) See Raw  ")
+    
+    if(redRaw < 0){
+        printf("You have to restock : ");
+}
+    /*for(int i=0; i< g_objectCount; i++){
         if(g_objectList [i].color == 0) {
             redRaw = redRaw - g_objectList [i].volume;
-            if(redRaw < g_objectList [i].volume) {
+            if(redRaw < 0) {
                 int option;
                 while(g_objectCount>0){
                     printf("You have to restock : ");
@@ -308,7 +394,7 @@ void ControlInventory() {
             }
         }
         
-    }
+    }*/
     
     printf("Current %d volume :%f\n", update.shape, update.volume);
     printf("%f\n", redRaw);
@@ -318,7 +404,7 @@ void ControlInventory() {
     
 }
 
-    
+
 int main() {
     int command = CO_HELP;
     printf("Welcome to 3-D Printer!");
@@ -334,4 +420,6 @@ int main() {
     while (command != CO_EXIT);
     return 0;
 }
+
+
 
