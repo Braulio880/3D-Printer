@@ -2,8 +2,6 @@
  * 3D-Printer Project
  * Braulio Torres, Rocio Espinal, Wyatt Luong
  * Dr. Yi Zhao
- * dark.sight97@gmail.com
- *espinalrocio088@gmail.com
  */
 #include <stdio.h>
 #include <math.h>
@@ -23,6 +21,13 @@ enum ColorCode {
     CC_BLUE = 2,
     CC_BLACK = 3,
     CC_COUNT = 4
+};
+enum SizeCode {
+    ZC_SMALL = 0,
+    ZC_MEDIUM = 1,
+    ZC_LARGE = 2,
+    ZC_HUGE = 3,
+    ZC_COUNT = 4
 };
 enum CommandOption {
     CO_HELP = 0,
@@ -49,11 +54,7 @@ typedef struct ObjectData_struct {
 // global data
 ObjectData g_objectList[MAX_OBJECTS];
 int g_objectCount = 0;
-int small = 0;
-int medium = 1;
-int large = 2;
-int huge = 3;
-double redRaw = 1000, greenRaw = 1000, blueRaw = 1000, blackRaw = 1000, redTemp, blueTemp, greenTemp, blackTemp, colorCount[MAX_OBJECTS], sizeCount[MAX_OBJECTS], shapeCount[MAX_OBJECTS];
+double redRaw = 1000, greenRaw = 1000, blueRaw = 1000, blackRaw = 1000, redTemp, blueTemp, greenTemp, blackTemp, colorCount[MAX_OBJECTS], shapeCount[MAX_OBJECTS], sizeCount[MAX_OBJECTS];
 // function prototypes
 
 void ProcessCommand(int command);
@@ -66,7 +67,7 @@ ObjectData ReadObjectData(void);
 
 void DisplayStatistics(void);
 
-void ControlInventory(void);
+void ControlInventory();
 
 void DisplayOption() {
     
@@ -94,11 +95,11 @@ void DisplayHelp() {
     printf("\n");
     
     printf("*Legend*\n");
-    printf("   0- Cube \t     0- Red \n");
-    printf("   1- Cuboid \t 1- Green\n");
-    printf("   2- Sphere \t 2-Blue\n");
-    printf("   3- Cylinder \t 3-Black\n");
-    printf("   4- Sphere\n");
+    printf("   0- Cube \t     0- Red \t Small: 0-250\n");
+    printf("   1- Cuboid \t 1- Green \t Medium: 250-500\n");
+    printf("   2- Sphere \t 2-Blue \t Large: 500-750\n");
+    printf("   3- Cylinder \t 3-Black \t Huge: 750-100\n");
+    printf("   4- Cone\n");
     
     
 }
@@ -154,7 +155,7 @@ ObjectData ReadObjectData()
     // read shape and color
     
     printf("Please enter the shape and color of object :\n");
-    printf("Shape (0-4): ");
+    printf("Shape (""Display Help Information"" For Shape Code 0-4): ");
     scanf("%d", &shape);
     for(i = 0; i >= 0; i++){
         if (0 > shape || shape > 4){
@@ -165,6 +166,8 @@ ObjectData ReadObjectData()
             break;
     }
     object.shape = shape;
+    shapeCount[SC_COUNT]++;
+    
     if(object.shape == SC_CUBE) {
         shapeCount[SC_CUBE]++;
     }
@@ -181,7 +184,8 @@ ObjectData ReadObjectData()
         shapeCount[SC_CONE]++;
     }
     
-    printf("Color(0-3): ");
+    
+    printf("Color (""Display Help Information"" For Color Code 0-3): ");
     scanf("%d", &color);
     for(i = 0; i >= 0; i++){
         if (0 > color || color > 3){
@@ -203,10 +207,9 @@ ObjectData ReadObjectData()
     else if(object.color == CC_BLUE) {
         colorCount[CC_BLUE]++;
     }
-    if(object.color == CC_BLACK) {
+    else if(object.color == CC_BLACK) {
         colorCount[CC_BLACK]++;
     }
-    
     
     switch (object.shape)
     {
@@ -277,7 +280,7 @@ ObjectData ReadObjectData()
             
             for(i = 0; i >= 0; i++){
                 if(object.volume > 1000) {
-                    printf("Not enough material! Enter another cuboid's side length : ");
+                    printf("Not enough material! Enter another cube's side length : ");
                     scanf("%lf%lf%lf", &length, &width, &height);
                     object.volume = length * width * height;
                 }
@@ -337,7 +340,7 @@ ObjectData ReadObjectData()
             
             for(i = 0; i >= 0; i++){
                 if(object.volume > 1000) {
-                    printf("Not enough material! Enter another sphere's side length : ");
+                    printf("Not enough material! Enter another cube's side length : ");
                     scanf("%lf", &radius);
                     object.volume = (4.0/3.0) * PI * (radius * radius * radius);
                 }
@@ -400,7 +403,7 @@ ObjectData ReadObjectData()
             
             for(i = 0; i >= 0; i++){
                 if(object.volume > 1000) {
-                    printf("Not enough material! Enter another cylinder's side length : ");
+                    printf("Not enough material! Enter another cube's side length : ");
                     printf("Radius : ");
                     scanf("%lf", &radius);
                     printf("Height : ");
@@ -466,7 +469,7 @@ ObjectData ReadObjectData()
             
             for(i = 0; i >= 0; i++){
                 if(object.volume > 1000) {
-                    printf("Not enough material! Enter another cone's side length : ");
+                    printf("Not enough material! Enter another cube's side length : ");
                     printf("Radius : ");
                     scanf("%lf", &radius);
                     printf("Height : ");
@@ -523,18 +526,22 @@ ObjectData ReadObjectData()
             }
             break;
     }
+    
+    sizeCount[ZC_COUNT]++;
     if(object.volume >= 0 && object.volume <= 250) {
-        sizeCount[small]++;
+        sizeCount[ZC_SMALL]++;
     }
     else if(object.volume > 250 && object.volume <= 500) {
-        sizeCount[medium]++;
+        sizeCount[ZC_MEDIUM]++;
     }
     else if(object.volume > 500 && object.volume <= 750) {
-        sizeCount[large]++;
+        sizeCount[ZC_LARGE]++;
     }
     else if(object.volume > 750 && object.volume <= 1000) {
-        sizeCount[huge]++;
+        sizeCount[ZC_HUGE]++;
     }
+    
+    
     return object;
 }
 
@@ -543,85 +550,89 @@ ObjectData ReadObjectData()
 
 void DisplayStatistics()
 {
-    //prints out the most popular shape used during the printing process
-    int popularShape = 0;
-    for(int k = 0; k < 4; k++) {
-        if(popularShape < shapeCount[k]) {
-            popularShape = shapeCount[k];
-        }
-    }
-    if(shapeCount[SC_CUBE] == popularShape) {
-        printf("Most popular shape is Cube\n");
-    }
-    if(shapeCount[SC_CUBOID] == popularShape) {
-        printf("Most popular shape is cuboid\n");
-    }
-    if(shapeCount[SC_SPHERE] == popularShape) {
-        printf("Most popular shape is Sphere\n");
-    }
-    if(shapeCount[SC_CYLINDER] == popularShape) {
-        printf("Most popular shape is Cylinder\n");
-    }
-    if(shapeCount[SC_CONE] == popularShape) {
-        printf("Most popular shape is Cone\n");
-    }
-    //prints out the most popular size
-    int popularSize = 0;
-    for(int j = 0; j < 3; j++) {
-        if(popularSize < sizeCount[j]) {
-            popularSize = sizeCount[j];
-        }
-    }
-    if(sizeCount[small] == popularSize) {
-        printf("Most Popular size is small\n");
-    }
-    if(sizeCount[medium] == popularSize) {
-        printf("Most Popular size is medium\n");
-    }
-    if(sizeCount[large] == popularSize) {
-        printf("Most Popular size is large\n");
-    }
-    if(sizeCount[huge] == popularSize) {
-        printf("Most Popular size is huge\n");
-    }
-    printf("\n");
-    //prints out the most popular color being used during the printing process
-    int i, maxVal = 0;
+    int option, i, maxVal = 0;
+    printf("Which statistic would you like to see?\n");
+    printf("\t 1) Shape and Color Usage\n");
+    printf("\t 2) Most Frequently Used Shape and Color\n");
+    printf("\t 3) Object Size Percentages\n");
     
-    for (i = 0; i < 5; i++)
-    {
+    printf("Choose option : ");
+    scanf("%d", &option);
+    printf("\n");
+    
+    switch(option){
+    
+        case 1:
+            printf("Color Percentages: \n");
+            printf("\t Red : %.2lf%%\n", (colorCount[CC_RED]/colorCount[CC_COUNT])* 100);
+            printf("\t Green : %.2lf%%\n", (colorCount[CC_GREEN]/colorCount[CC_COUNT] )* 100);
+            printf("\t Blue : %.2lf%%\n", (colorCount[CC_BLUE]/colorCount[CC_COUNT])* 100);
+            printf("\t Black : %.2lf%%\n", (colorCount[CC_BLACK]/colorCount[CC_COUNT])* 100);
+            printf("\n");
+            printf("Shape Percentages: \n");
+            printf("\t Cube : %.2lf%%\n", (shapeCount[SC_CUBE]/shapeCount[SC_COUNT])* 100);
+            printf("\t Cuboid : %.2lf%%\n", (shapeCount[SC_CUBOID]/shapeCount[SC_COUNT])* 100);
+            printf("\t Sphere : %.2lf%%\n", (shapeCount[SC_SPHERE]/shapeCount[SC_COUNT])* 100);
+            printf("\t Cylinder : %.2lf%%\n", (shapeCount[SC_CYLINDER]/shapeCount[SC_COUNT])* 100);
+            printf("\t Cone : %.2lf%%\n", (shapeCount[SC_CONE]/shapeCount[SC_COUNT])* 100);
+            break;
+       
+        case 2:
+            for (i = 0; i < 5; i++){
         if (maxVal < colorCount[i])
             maxVal = colorCount[i];
-    }
+            }
     
-    if(colorCount[CC_RED] == maxVal){
-        printf("Most Popular Color is Red\n");
-    }
-    if(colorCount[CC_GREEN] == maxVal){
-        printf("Most Popular Color is Green\n");
-    }
-    if(colorCount[CC_BLUE] == maxVal){
-        printf("Most Popular Color is Blue\n");
-    }
-    if(colorCount[CC_BLACK] == maxVal){
-        printf("Most Popular Color is Black\n");
-    }
-    printf("\n");
-    printf("Color Percentage: \n");
-    printf("\t Red : %.2lf\n", (colorCount[CC_RED]/colorCount[CC_COUNT])* 100);
-    printf("\t Green : %.2lf\n", (colorCount[CC_GREEN]/colorCount[CC_COUNT])* 100);
-    printf("\t Blue : %.2lf\n", (colorCount[CC_BLUE]/colorCount[CC_COUNT])* 100);
-    printf("\t Black : %.2lf\n", (colorCount[CC_BLACK]/colorCount[CC_COUNT])* 100);
-    
-    
+        if(colorCount[CC_RED] == maxVal){
+            printf("Most Popular Color is Red\n");
+                }
+        else if(colorCount[CC_GREEN] == maxVal){
+            printf("Most Popular Color is Green\n");
+                }
+        else if(colorCount[CC_BLUE] == maxVal){
+            printf("Most Popular Color is Blue\n");
+                }
+        else if(colorCount[CC_BLACK] == maxVal){
+            printf("Most Popular Color is Black\n");
+                }
+           
+            for (i = 0; i < 5; i++){
+                if (maxVal < shapeCount[i])
+                    maxVal = shapeCount[i];
+            }
+            
+            if(shapeCount[SC_CUBE] == maxVal){
+                printf("Most Popular Shape is a Cube\n");
+            }
+            else if(shapeCount[SC_CUBOID] == maxVal){
+                printf("Most Popular Shape is a Cuboid\n");
+            }
+            else if(shapeCount[SC_SPHERE] == maxVal){
+                printf("Most Popular Shape is a Sphere\n");
+            }
+            else if(shapeCount[SC_CYLINDER] == maxVal){
+                printf("Most Popular Shape is a Cylinder\n");
+            }
+            else if(shapeCount[SC_CONE] == maxVal){
+                printf("Most Popular Shape is a Cone\n");
+            }
+            break;
+        case 3:
+            printf("Size Percentages(""Display Help Information"" For Size Definition): \n");
+            printf("\t Small : %.2lf%%\n", (sizeCount[ZC_SMALL]/sizeCount[ZC_COUNT])* 100);
+            printf("\t Medium : %.2lf%%\n", (sizeCount[ZC_MEDIUM]/sizeCount[ZC_COUNT])* 100);
+            printf("\t Large : %.2lf%%\n", (sizeCount[ZC_LARGE]/sizeCount[ZC_COUNT])* 100);
+            printf("\t Huge : %.2lf%%\n", (sizeCount[ZC_HUGE]/sizeCount[ZC_COUNT])* 100);
+            printf("\n");
+            break;
+        }
 }
 
 void ControlInventory() {
-    //asks the user for two input: 1 to restock and 2 to display raw material inventory
     ObjectData update = g_objectList [g_objectCount-1];
     int option;
     
-    printf("What would you like to do?\n");
+    printf("Choose one of the options below\n");
     printf(" 1) Restock\n 2) See Raw Material\n\n");
     printf("Choose option : ");
     scanf("%d", &option);
@@ -640,6 +651,9 @@ void ControlInventory() {
             printf("%f\n", greenRaw);
             printf("%f\n", blueRaw);
             printf("%f\n", blackRaw);
+            break;
+        
+        default:
             break;
     }
     
