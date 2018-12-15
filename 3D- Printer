@@ -550,11 +550,12 @@ ObjectData ReadObjectData()
 
 void DisplayStatistics()
 {
-    int option, i, maxVal = 0;
+    int option, i, maxVal2 = 0, maxVal1 = 0;
     printf("Which statistic would you like to see?\n");
     printf("\t 1) Shape and Color Usage\n");
-    printf("\t 2) Most Frequently Used Shape and Color\n");
-    printf("\t 3) Object Size Percentages\n");
+    printf("\t 2) Most Frequently Used Color\n");
+    printf("\t 3) Most Frequently Used Shape\n");
+    printf("\t 4) Object Size Percentages\n");
     
     printf("Choose option : ");
     scanf("%d", &option);
@@ -579,45 +580,48 @@ void DisplayStatistics()
        
         case 2:
             for (i = 0; i < 5; i++){
-        if (maxVal < colorCount[i])
-            maxVal = colorCount[i];
+        if (maxVal2 < colorCount[i])
+            maxVal2 = colorCount[i];
             }
     
-        if(colorCount[CC_RED] == maxVal){
+        if(colorCount[CC_RED] == maxVal2){
             printf("Most Popular Color is Red\n");
                 }
-        else if(colorCount[CC_GREEN] == maxVal){
+        if(colorCount[CC_GREEN] == maxVal2){
             printf("Most Popular Color is Green\n");
                 }
-        else if(colorCount[CC_BLUE] == maxVal){
+        if(colorCount[CC_BLUE] == maxVal2){
             printf("Most Popular Color is Blue\n");
                 }
-        else if(colorCount[CC_BLACK] == maxVal){
+        if(colorCount[CC_BLACK] == maxVal2){
             printf("Most Popular Color is Black\n");
                 }
+            break;
            
+        case 3:
             for (i = 0; i < 5; i++){
-                if (maxVal < shapeCount[i])
-                    maxVal = shapeCount[i];
+                if (maxVal1 < shapeCount[i])
+                    maxVal1 = shapeCount[i];
             }
             
-            if(shapeCount[SC_CUBE] == maxVal){
+            if(shapeCount[SC_CUBE] == maxVal1){
                 printf("Most Popular Shape is a Cube\n");
             }
-            else if(shapeCount[SC_CUBOID] == maxVal){
+            if(shapeCount[SC_CUBOID] == maxVal1){
                 printf("Most Popular Shape is a Cuboid\n");
             }
-            else if(shapeCount[SC_SPHERE] == maxVal){
+            if(shapeCount[SC_SPHERE] == maxVal1){
                 printf("Most Popular Shape is a Sphere\n");
             }
-            else if(shapeCount[SC_CYLINDER] == maxVal){
+            if(shapeCount[SC_CYLINDER] == maxVal1){
                 printf("Most Popular Shape is a Cylinder\n");
             }
-            else if(shapeCount[SC_CONE] == maxVal){
+            if(shapeCount[SC_CONE] == maxVal1){
                 printf("Most Popular Shape is a Cone\n");
             }
+
             break;
-        case 3:
+        case 4:
             printf("Size Percentages(""Display Help Information"" For Size Definition): \n");
             printf("\t Small : %.2lf%%\n", (sizeCount[ZC_SMALL]/sizeCount[ZC_COUNT])* 100);
             printf("\t Medium : %.2lf%%\n", (sizeCount[ZC_MEDIUM]/sizeCount[ZC_COUNT])* 100);
@@ -646,7 +650,7 @@ void ControlInventory() {
             break;
             
         case 2:
-            printf("Current shape : %d  Current volume :%f\n", update.shape, update.volume);
+            printf("Current color : %d  Current volume :%f\n", update.color, update.volume);
             printf("%f\n", redRaw);
             printf("%f\n", greenRaw);
             printf("%f\n", blueRaw);
